@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -12,10 +11,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -29,6 +28,7 @@ import acmestore.model.exceptions.FileException;
 
 public class App {
 	public static void main(String[] args) {
+		
 		/*
 		 * 1 - Crie uma Classe com um método main para criar alguns produtos, clientes e
 		 * pagamentos. Crie Pagamentos com: a data de hoje, ontem e um do mês passado.
@@ -74,8 +74,6 @@ public class App {
 			cR.add(p6);
 			cR.add(p7);
 			cR.add(p2);
-			// cR.add(p9);
-			// cR.add(p9);
 
 			List<Produto> cJ = new ArrayList<>();
 			cJ.add(p4);
@@ -146,20 +144,20 @@ public class App {
 
 			/*
 			 * 3 - Calcule e Imprima a soma dos valores de um pagamento com optional e
-			 * recebendo um Double diretamente.
+			 * recebendo um Double diretamente. !!! (Dúvida)
 			 */
 			System.out.println("\n------- Soma de um Pagamento -------");
-			Double sum = Optional.of(pagamentosOrdenados.last()).get().getProdutos().stream()
-					.map(produto -> produto.getPreco().doubleValue()).reduce(0.0, (a, b) -> a + b);
-			System.out.println("Soma do valor de um pagamento: " + formatBigDecimal(sum));
+			BigDecimal sum = pagamentosOrdenados.last().getProdutos().stream()
+					.map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
+			System.out.println("Soma do valor de um pagamento: " + Assinatura.formatBigDecimal(sum));
 
 			/*
 			 * 4 - Calcule o Valor de todos os pagamentos da Lista de pagamentos.
 			 */
 			System.out.println("\n------- Soma de cada pagamento -------");
 			pagamentos.forEach(p -> System.out.println("Cliente: " + p.getCliente().getName() + ", total: "
-					+ formatBigDecimal(p.getProdutos().stream()
-							.map(produto -> produto.getPreco().doubleValue()).reduce(0.0, (a, b) -> a + b))));
+					+ Assinatura.formatBigDecimal(p.getProdutos().stream()
+							.map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add))));
 
 			/*
 			 * 5 - Imprima a quantidade de cada Produto vendido.
@@ -194,13 +192,13 @@ public class App {
 			BigDecimal most = totalByClient.get(c);
 
 			System.out.println(
-					"Cliente: " + c.getName() + ", total: " + formatBigDecimal(most));
+					"Cliente: " + c.getName() + ", total: " + Assinatura.formatBigDecimal(most));
 
 			/*
 			 * 8 - Quanto foi faturado em um determinado mês?
 			 */
 			System.out.println("\n------- Faturação por mês -------");
-			Map<Month, BigDecimal> totalByMonth = new HashMap<>();
+			Map<Month, BigDecimal> totalByMonth = new EnumMap<>(Month.class);
 			for (Pagamento p : pagamentos) {
 				Month m = p.getDataCompra().getMonth();
 				BigDecimal total = calcularTotal(p.getProdutos());
@@ -211,27 +209,20 @@ public class App {
 			}
 
 			totalByMonth.entrySet().stream().forEach(x -> System.out
-					.println(x.getKey() + ", valor total: " + formatBigDecimal(x.getValue())));
+					.println(x.getKey() + ", valor total: " + Assinatura.formatBigDecimal(x.getValue())));
 
 			/*
 			 * 9 - Crie 3 assinaturas com assinaturas de 99.98 reais, sendo 2 deles com
 			 * assinaturas encerradas.
 			 */
-			// Assinatura a1 = new Assinatura(new BigDecimal(99.98),
-			// LocalDateTime.now().minusYears(4).minusWeeks(4), Optional.of(pedro), false);
-			// Assinatura a2 = new Assinatura(new BigDecimal(99.98),
-			// LocalDateTime.now().minusYears(1).minusWeeks(2),
-			// LocalDateTime.now().minusHours(1), Optional.of(rodrigo), false);
-			// Assinatura a3 = new Assinatura(new BigDecimal(99.98),
-			// LocalDateTime.now().minusWeeks(1), LocalDateTime.now().minusHours(5),
-			// Optional.of(joana), false);
+			BigDecimal valorAssinatura = BigDecimal.valueOf(99.98);
 
-			Assinatura a1 = new AssinaturaBuilder(new BigDecimal(99.98)).setBegin(LocalDateTime.now().minusYears(4))
+			Assinatura a1 = new AssinaturaBuilder(valorAssinatura).setBegin(LocalDateTime.now().minusYears(4))
 					.setCliente(pedro).setAtraso(false).setTipo(AssinaturaType.ANUAL).getEntity();
-			Assinatura a2 = new AssinaturaBuilder(new BigDecimal(99.98)).setBegin(LocalDateTime.now().minusYears(1))
+			Assinatura a2 = new AssinaturaBuilder(valorAssinatura).setBegin(LocalDateTime.now().minusYears(1))
 					.setEnd(LocalDateTime.now().minusHours(1)).setCliente(rodrigo).setAtraso(false)
 					.setTipo(AssinaturaType.SEMESTRAL).getEntity();
-			Assinatura a3 = new AssinaturaBuilder(new BigDecimal(99.98)).setBegin(LocalDateTime.now().minusWeeks(8))
+			Assinatura a3 = new AssinaturaBuilder(valorAssinatura).setBegin(LocalDateTime.now().minusWeeks(8))
 					.setEnd(LocalDateTime.now().minusHours(1)).setCliente(joana).setAtraso(false)
 					.setTipo(AssinaturaType.TRIMESTRAL).getEntity();
 
@@ -240,21 +231,11 @@ public class App {
 			assinaturas.add(a2);
 			assinaturas.add(a3);
 
-			//assinaturas.forEach(a -> System.out.println(a));
 
 			/*
 			 * 10 - Imprima o tempo em meses de alguma assinatura ainda ativa.
 			 */
 			System.out.println("\n------- Tempo em meses de assinaturas ativas -------");
-
-//			for (Assinatura a : assinaturas) {
-//				if (a.getEnd() == null) {
-//					long months = ChronoUnit.MONTHS.between(a.getBegin(), LocalDateTime.now());
-//					System.out.println("Cliente: " + a.getCliente().get().getName() + ", tempo de assinatura: " + months
-//							+ " meses.");
-//				}
-//			}
-
 			assinaturas.stream().filter(a -> a.getEnd().isEmpty()).forEach(
 					ass -> System.out.println("Cliente: " + ass.getCliente().getName() + ", tempo de assinatura: "
 							+ ChronoUnit.MONTHS.between(ass.getBegin(), LocalDateTime.now()) + " meses."));
@@ -270,22 +251,20 @@ public class App {
 			 * 12 - Calcule o valor pago em cada assinatura até o momento.
 			 */
 			System.out.println("\n------- Valor total por assinatura -------");
-			assinaturas.forEach(App::exibirTotalAssinatura);
+			assinaturas.forEach(Assinatura::exibirTotalAssinatura);
 
 			/*
 			 * --------- INÍCIO LISTA 2 -----------
 			 */
 			System.out.println("\n------- Taxa por assinatura -------");
 			assinaturas.forEach(a -> System.out
-					.println(formatBigDecimal(a.calcularTaxa(calcularTotalAssinatura(a)))));
+					.println(Assinatura.formatBigDecimal(a.calcularTaxa(Assinatura.calcularTotalAssinatura(a)))));
 
 		}
 	}
 
 	public static BigDecimal calcularTotal(List<Produto> list) {
-		BigDecimal total = BigDecimal.ZERO;
-		total = list.stream().map(x -> x.getPreco()).reduce(BigDecimal.valueOf(0.0), (a, b) -> a.add(b));
-		return total;
+		return list.stream().map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
 	}
 
 	public static void calcularDiferencaMeses(Assinatura a) {
@@ -293,29 +272,5 @@ public class App {
 		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
 
 		System.out.println(ChronoUnit.MONTHS.between(b, e));
-	}
-
-	public static void exibirTotalAssinatura(Assinatura a) {
-		LocalDateTime b = a.getBegin();
-		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
-
-		long months = ChronoUnit.MONTHS.between(b, e);
-		System.out.println(formatBigDecimal(a.getMensalidade().multiply(BigDecimal.valueOf(months))));
-	}
-
-	public static double calcularTotalAssinatura(Assinatura a) {
-		LocalDateTime b = a.getBegin();
-		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
-
-		long months = ChronoUnit.MONTHS.between(b, e);
-		return a.getMensalidade().multiply(BigDecimal.valueOf(months)).doubleValue();
-	}
-	
-	public static String formatBigDecimal(BigDecimal valor) {
-		return "R$ " + new DecimalFormat("#,##0.00").format(valor.doubleValue());
-	}
-	
-	public static String formatBigDecimal(double valor) {
-		return "R$ " + new DecimalFormat("#,##0.00").format(valor);
 	}
 }

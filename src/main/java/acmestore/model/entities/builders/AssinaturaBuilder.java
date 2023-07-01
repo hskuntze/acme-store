@@ -11,7 +11,7 @@ import acmestore.model.entities.enums.AssinaturaType;
 public class AssinaturaBuilder {
 	private BigDecimal mensalidade;
 	private LocalDateTime begin;
-	private Optional<LocalDateTime> end;
+	private Optional<LocalDateTime> end = Optional.empty();
 	private Cliente cliente;
 	private boolean atraso;
 	private AssinaturaType tipo;
@@ -46,7 +46,7 @@ public class AssinaturaBuilder {
 	}
 	
 	public Assinatura getEntity() {
-		if(end == null) {
+		if(end.isEmpty()) {
 			return new Assinatura(mensalidade, begin, cliente, atraso, tipo);
 		} else {
 			return new Assinatura(mensalidade, begin, end, cliente, atraso, tipo);

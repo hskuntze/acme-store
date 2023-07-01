@@ -1,7 +1,9 @@
 package acmestore.model.entities;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import acmestore.model.entities.enums.AssinaturaType;
@@ -85,20 +87,40 @@ public class Assinatura {
 	}
 
 	private String formatAtraso() {
-		return atraso == true ? "Sim" : "Não";
+		return atraso ? "Sim" : "Não";
 	}
 	
-	public double calcularTaxa(double valorTotal) {
+	public BigDecimal calcularTaxa(double valorTotal) {
 		switch(tipo) {
 			case ANUAL:
-				return 0.0;
+				return BigDecimal.valueOf(0.0);
 			case SEMESTRAL:
-				return valorTotal * 0.03;
+				return BigDecimal.valueOf(valorTotal * 0.03);
 			case TRIMESTRAL:
-				return valorTotal * 0.05;
+				return BigDecimal.valueOf(valorTotal * 0.05);
 			default:
-				return 0.0;
+				return BigDecimal.valueOf(0.0);
 		}
+	}
+
+	public static double calcularTotalAssinatura(Assinatura a) {
+		LocalDateTime b = a.getBegin();
+		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
+
+		long months = ChronoUnit.MONTHS.between(b, e);
+		return a.getMensalidade().multiply(BigDecimal.valueOf(months)).doubleValue();
+	}
+
+	public static void exibirTotalAssinatura(Assinatura a) {
+		LocalDateTime b = a.getBegin();
+		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
+
+		long months = ChronoUnit.MONTHS.between(b, e);
+		System.out.println(formatBigDecimal(a.getMensalidade().multiply(BigDecimal.valueOf(months))));
+	}
+	
+	public static String formatBigDecimal(BigDecimal valor) {
+		return "R$ " + new DecimalFormat("#,##0.00").format(valor.doubleValue());
 	}
 
 	@Override
