@@ -23,12 +23,14 @@ import acmestore.model.entities.Cliente;
 import acmestore.model.entities.Pagamento;
 import acmestore.model.entities.Produto;
 import acmestore.model.entities.builders.AssinaturaBuilder;
+import acmestore.model.entities.builders.PagamentoBuilder;
+import acmestore.model.entities.builders.ProdutoBuilder;
 import acmestore.model.entities.enums.AssinaturaType;
 import acmestore.model.exceptions.FileException;
 
 public class App {
 	public static void main(String[] args) {
-		
+
 		/*
 		 * 1 - Crie uma Classe com um método main para criar alguns produtos, clientes e
 		 * pagamentos. Crie Pagamentos com: a data de hoje, ontem e um do mês passado.
@@ -53,16 +55,16 @@ public class App {
 		}
 
 		if (file != null) {
-			Produto p1 = new Produto("Samsung Notebook", file, BigDecimal.valueOf(3400.00));
-			Produto p2 = new Produto("Lenovo Ideapad 3", file, BigDecimal.valueOf(2800.00));
-			Produto p3 = new Produto("Xioami Poc X5", file, BigDecimal.valueOf(1615.89));
-			Produto p4 = new Produto("IPhone 14 Pro", file, BigDecimal.valueOf(10499.99));
-			Produto p5 = new Produto("JBL Wind 2", file, BigDecimal.valueOf(215.15));
-			Produto p6 = new Produto("Relógio Golden Hour", file, BigDecimal.valueOf(189.90));
-			Produto p7 = new Produto("Memória RAM 16GB p/ Notebook", file, BigDecimal.valueOf(259.60));
-			Produto p8 = new Produto("Perfume Ferrari Black", file, BigDecimal.valueOf(199.00));
-			Produto p9 = new Produto("IPad Pro", file, BigDecimal.valueOf(8974.99));
-			Produto p10 = new Produto("Box Trilogia Ascenção - Isaac Asimov", file, BigDecimal.valueOf(215.15));
+			Produto p1 = new ProdutoBuilder("Samsung Notebook").setFile(file).setPreco(BigDecimal.valueOf(3400.00)).getEntity();
+			Produto p2 = new ProdutoBuilder("Lenovo Ideapad 3").setFile(file).setPreco(BigDecimal.valueOf(2800.00)).getEntity();
+			Produto p3 = new ProdutoBuilder("Xioami Poc X5").setFile(file).setPreco(BigDecimal.valueOf(1615.89)).getEntity();
+			Produto p4 = new ProdutoBuilder("IPhone 14 Pro").setFile(file).setPreco(BigDecimal.valueOf(10499.99)).getEntity();
+			Produto p5 = new ProdutoBuilder("JBL Wind 2").setFile(file).setPreco(BigDecimal.valueOf(215.15)).getEntity();
+			Produto p6 = new ProdutoBuilder("Relógio Golden Hour").setFile(file).setPreco(BigDecimal.valueOf(189.90)).getEntity();
+			Produto p7 = new ProdutoBuilder("Memória RAM 16GB p/ Notebook").setFile(file).setPreco(BigDecimal.valueOf(259.60)).getEntity();
+			Produto p8 = new ProdutoBuilder("Perfume Ferrari Black").setFile(file).setPreco(BigDecimal.valueOf(199.00)).getEntity();
+			Produto p9 = new ProdutoBuilder("IPad Pro").setFile(file).setPreco(BigDecimal.valueOf(8974.99)).getEntity();
+			Produto p10 = new ProdutoBuilder("Box Trilogia Ascenção - Isaac Asimov").setFile(file).setPreco(BigDecimal.valueOf(215.15)).getEntity();
 
 			List<Produto> cP = new ArrayList<>();
 			cP.add(p1);
@@ -106,16 +108,16 @@ public class App {
 			List<Produto> cM = new ArrayList<>();
 			cM.add(p10);
 
-			Pagamento pagPedro = new Pagamento(cP, LocalDateTime.now(), pedro);
-			Pagamento pagRodrigo = new Pagamento(cR, LocalDateTime.now(), rodrigo);
-			Pagamento pagJoao = new Pagamento(cJ, LocalDate.now().atTime(12, 15), joao);
-			Pagamento pagHenrique = new Pagamento(cH, LocalDateTime.now().plusHours(1), henrique);
-			Pagamento pagTiago = new Pagamento(cT, LocalDateTime.now().minusDays(1), tiago);
-			Pagamento pagLuiza = new Pagamento(cL, LocalDate.now().minusDays(1).atTime(12, 0), luiza);
-			Pagamento pagRose = new Pagamento(cRs, LocalDate.now().plusDays(1).atTime(16, 15), rose);
-			Pagamento pagValeria = new Pagamento(cV, LocalDate.now().minusMonths(1).atStartOfDay(), valeria);
-			Pagamento pagJoana = new Pagamento(cJo, LocalDateTime.now().minusDays(1), joana);
-			Pagamento pagMeire = new Pagamento(cM, LocalDate.now().minusMonths(1).atTime(15, 0), meire);
+			Pagamento pagPedro = new PagamentoBuilder(pedro).setDataCompra(LocalDateTime.now()).setProdutos(cP).getEntity();
+			Pagamento pagRodrigo = new PagamentoBuilder(rodrigo).setDataCompra(LocalDateTime.now()).setProdutos(cR).getEntity();
+			Pagamento pagJoao = new PagamentoBuilder(joao).setDataCompra(LocalDate.now().atTime(12, 15)).setProdutos(cJ).getEntity();
+			Pagamento pagHenrique = new PagamentoBuilder(henrique).setDataCompra(LocalDateTime.now().plusHours(1)).setProdutos(cH).getEntity();
+			Pagamento pagTiago = new PagamentoBuilder(tiago).setDataCompra(LocalDateTime.now().minusDays(1)).setProdutos(cT).getEntity();
+			Pagamento pagLuiza = new PagamentoBuilder(luiza).setDataCompra(LocalDate.now().minusDays(1).atTime(12, 0)).setProdutos(cL).getEntity();
+			Pagamento pagRose = new PagamentoBuilder(rose).setDataCompra(LocalDate.now().plusDays(1).atTime(16, 15)).setProdutos(cRs).getEntity();
+			Pagamento pagValeria = new PagamentoBuilder(valeria).setDataCompra(LocalDate.now().minusMonths(1).atStartOfDay()).setProdutos(cV).getEntity();
+			Pagamento pagJoana = new PagamentoBuilder(joana).setDataCompra(LocalDateTime.now().minusDays(1)).setProdutos(cJo).getEntity();
+			Pagamento pagMeire = new PagamentoBuilder(meire).setDataCompra(LocalDate.now().minusMonths(1).atTime(15, 0)).setProdutos(cM).getEntity();
 
 			List<Pagamento> pagamentos = new ArrayList<>();
 			pagamentos.add(pagPedro);
@@ -147,17 +149,17 @@ public class App {
 			 * recebendo um Double diretamente. !!! (Dúvida)
 			 */
 			System.out.println("\n------- Soma de um Pagamento -------");
-			BigDecimal sum = pagamentosOrdenados.last().getProdutos().stream()
-					.map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
+			BigDecimal sum = pagamentosOrdenados.last().getProdutos().stream().map(Produto::getPreco)
+					.reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
 			System.out.println("Soma do valor de um pagamento: " + Assinatura.formatBigDecimal(sum));
 
 			/*
 			 * 4 - Calcule o Valor de todos os pagamentos da Lista de pagamentos.
 			 */
 			System.out.println("\n------- Soma de cada pagamento -------");
-			pagamentos.forEach(p -> System.out.println("Cliente: " + p.getCliente().getName() + ", total: "
-					+ Assinatura.formatBigDecimal(p.getProdutos().stream()
-							.map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add))));
+			pagamentos.forEach(p -> System.out.println(
+					"Cliente: " + p.getCliente().getName() + ", total: " + Assinatura.formatBigDecimal(p.getProdutos()
+							.stream().map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add))));
 
 			/*
 			 * 5 - Imprima a quantidade de cada Produto vendido.
@@ -184,15 +186,14 @@ public class App {
 			for (Map.Entry<Cliente, List<Produto>> entry : productsByClient.entrySet()) {
 				Cliente c = entry.getKey();
 				List<Produto> p = entry.getValue();
-				BigDecimal total = calcularTotal(p);
+				BigDecimal total = Pagamento.calcularTotal(p);
 				totalByClient.put(c, total);
 			}
 
 			Cliente c = Collections.max(totalByClient.entrySet(), Map.Entry.comparingByValue()).getKey();
 			BigDecimal most = totalByClient.get(c);
 
-			System.out.println(
-					"Cliente: " + c.getName() + ", total: " + Assinatura.formatBigDecimal(most));
+			System.out.println("Cliente: " + c.getName() + ", total: " + Assinatura.formatBigDecimal(most));
 
 			/*
 			 * 8 - Quanto foi faturado em um determinado mês?
@@ -201,7 +202,7 @@ public class App {
 			Map<Month, BigDecimal> totalByMonth = new EnumMap<>(Month.class);
 			for (Pagamento p : pagamentos) {
 				Month m = p.getDataCompra().getMonth();
-				BigDecimal total = calcularTotal(p.getProdutos());
+				BigDecimal total = Pagamento.calcularTotal(p.getProdutos());
 				BigDecimal totalMes = totalByMonth.getOrDefault(m, BigDecimal.ZERO);
 				totalMes = totalMes.add(total);
 
@@ -231,7 +232,6 @@ public class App {
 			assinaturas.add(a2);
 			assinaturas.add(a3);
 
-
 			/*
 			 * 10 - Imprima o tempo em meses de alguma assinatura ainda ativa.
 			 */
@@ -245,7 +245,7 @@ public class App {
 			 * utilize IFs para assinaturas sem end Time.
 			 */
 			System.out.println("\n------- Tempo em meses entre start e end de todas assinaturas -------");
-			assinaturas.forEach(App::calcularDiferencaMeses);
+			assinaturas.forEach(Assinatura::calcularDiferencaMeses);
 
 			/*
 			 * 12 - Calcule o valor pago em cada assinatura até o momento.
@@ -255,22 +255,19 @@ public class App {
 
 			/*
 			 * --------- INÍCIO LISTA 2 -----------
+			 * Crie um método para calcular uma taxa para cada assinatura.
 			 */
 			System.out.println("\n------- Taxa por assinatura -------");
 			assinaturas.forEach(a -> System.out
 					.println(Assinatura.formatBigDecimal(a.calcularTaxa(Assinatura.calcularTotalAssinatura(a)))));
 
+			/*
+			 * Crie um mecanismo para validar clientes que tentarem fazer compras com
+			 * assinatura em atraso e não deixá-los comprar.
+			 */
+			System.out.println("\n------- Mecanismo que verifica atraso e não permite efetuar pagamento -------");
+			assinaturas.stream().forEach(a -> pagamentos.stream().filter(p -> a.getCliente() == p.getCliente())
+					.forEach(p -> System.out.println(Assinatura.formatBigDecimal(Pagamento.calcularTotal(a, p)))));
 		}
-	}
-
-	public static BigDecimal calcularTotal(List<Produto> list) {
-		return list.stream().map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
-	}
-
-	public static void calcularDiferencaMeses(Assinatura a) {
-		LocalDateTime b = a.getBegin();
-		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
-
-		System.out.println(ChronoUnit.MONTHS.between(b, e));
 	}
 }

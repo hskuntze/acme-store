@@ -1,9 +1,12 @@
 package acmestore.model.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import acmestore.model.exceptions.DelayedPaymentException;
 
 public class Pagamento {
 	private List<Produto> produtos = new ArrayList<>();
@@ -46,6 +49,18 @@ public class Pagamento {
 	public String formatarData(LocalDateTime data) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
 		return data.format(formatter);
+	}
+
+	public static BigDecimal calcularTotal(List<Produto> list) {
+		return list.stream().map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
+	}
+	
+	public static BigDecimal calcularTotal(Assinatura a, Pagamento p) {
+		if(!a.isAtrasado()) {
+			return p.getProdutos().stream().map(Produto::getPreco).reduce(BigDecimal.valueOf(0.0), BigDecimal::add);
+		} else {
+			throw new DelayedPaymentException("Pagamento pendente: Você não será capaz de efetuar compras se sua assinatura estiver com pagamentos pendentes.");
+		}
 	}
 
 	@Override

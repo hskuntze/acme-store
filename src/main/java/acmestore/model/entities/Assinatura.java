@@ -70,7 +70,7 @@ public class Assinatura {
 		this.cliente = cliente;
 	}
 
-	public boolean isAtraso() {
+	public boolean isAtrasado() {
 		return atraso;
 	}
 
@@ -90,25 +90,25 @@ public class Assinatura {
 		return atraso ? "Sim" : "Não";
 	}
 	
-	public BigDecimal calcularTaxa(double valorTotal) {
+	public BigDecimal calcularTaxa(BigDecimal valorTotal) {
 		switch(tipo) {
 			case ANUAL:
 				return BigDecimal.valueOf(0.0);
 			case SEMESTRAL:
-				return BigDecimal.valueOf(valorTotal * 0.03);
+				return valorTotal.multiply(BigDecimal.valueOf(0.03));
 			case TRIMESTRAL:
-				return BigDecimal.valueOf(valorTotal * 0.05);
+				return valorTotal.multiply(BigDecimal.valueOf(0.05));
 			default:
 				return BigDecimal.valueOf(0.0);
 		}
 	}
 
-	public static double calcularTotalAssinatura(Assinatura a) {
+	public static BigDecimal calcularTotalAssinatura(Assinatura a) {
 		LocalDateTime b = a.getBegin();
 		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
 
 		long months = ChronoUnit.MONTHS.between(b, e);
-		return a.getMensalidade().multiply(BigDecimal.valueOf(months)).doubleValue();
+		return a.getMensalidade().multiply(BigDecimal.valueOf(months));
 	}
 
 	public static void exibirTotalAssinatura(Assinatura a) {
@@ -117,6 +117,13 @@ public class Assinatura {
 
 		long months = ChronoUnit.MONTHS.between(b, e);
 		System.out.println(formatBigDecimal(a.getMensalidade().multiply(BigDecimal.valueOf(months))));
+	}
+
+	public static void calcularDiferencaMeses(Assinatura a) {
+		LocalDateTime b = a.getBegin();
+		LocalDateTime e = a.getEnd().orElse(LocalDateTime.now());
+
+		System.out.println(ChronoUnit.MONTHS.between(b, e));
 	}
 	
 	public static String formatBigDecimal(BigDecimal valor) {
